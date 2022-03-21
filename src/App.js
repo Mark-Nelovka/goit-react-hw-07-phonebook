@@ -1,29 +1,35 @@
-import { useState } from "react";
-import { useDispatch } from 'react-redux'
-import actions from "redux/contacts/actions";
-import s from "./App.module.css";
-import Form from "./Components/Form/Form";
-import ContactList from "./Components/Contacts/ContactList";
-import Filter from "./Components/Filter/Filtet";
-import WindowModal from "./Components/Modal/Modal";
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import actions from 'redux/contacts/actions';
+import s from './App.module.css';
+import Form from './Components/Form/Form';
+import ContactList from './Components/Contacts/ContactList';
+import Filter from './Components/Filter/Filtet';
+import WindowModal from './Components/Modal/Modal';
 
 function App() {
+  const contacts = useSelector(state => state.contacts.items);
+  const filter = useSelector(state => state.contacts.filter);
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const [deleteName, setDeleteName] = useState("");
+  const [deleteName, setDeleteName] = useState('');
 
-  const onDelete = (contactDeleteDId) => {
+  useEffect(() => {
+    dispatch(actions.fetchContacts());
+  }, [dispatch]);
+
+  const onDelete = contactDeleteDId => {
     dispatch(actions.deleteContacts(contactDeleteDId));
-    dispatch(actions.fetchContacts())
+    dispatch(actions.fetchContacts());
     setIsOpen(false);
   };
 
   const dontDelete = () => {
     setIsOpen(false);
-    setDeleteName("");
+    setDeleteName('');
   };
 
-  const removeContact = (contactId) => {
+  const removeContact = contactId => {
     setDeleteName(contactId);
     setIsOpen(true);
   };
@@ -35,7 +41,11 @@ function App() {
       <h2>Contacts</h2>
       <p>Поиск контакта по имени</p>
       <Filter />
-      <ContactList onRemoveContact={removeContact} />
+      <ContactList
+        onRemoveContact={removeContact}
+        contacts={contacts}
+        filter={filter}
+      />
       {isOpen ? (
         <WindowModal
           modalRemove={deleteName}
@@ -43,7 +53,7 @@ function App() {
           onDelete={onDelete}
         />
       ) : (
-        ""
+        ''
       )}
     </section>
   );

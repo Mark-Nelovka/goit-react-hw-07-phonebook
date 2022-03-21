@@ -1,38 +1,29 @@
-import { useState, useEffect } from "react";
-import { useDispatch } from 'react-redux'
-import actions from "redux/contacts/actions";
-import PropTypes from "prop-types";
-import s from "./Form.module.css";
-// import actions from "redux/contacts/actions";
-// import axios from "axios";
-// import { nanoid } from "nanoid";
-
-
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import actions from 'redux/contacts/actions';
+import PropTypes from 'prop-types';
+import s from './Form.module.css';
 
 export default function Form() {
-  const [name, setName] = useState("");
-  const [number, setNumber] = useState("");
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
   const dispatch = useDispatch();
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.currentTarget;
-    if (name === "name") {
+    if (name === 'name') {
       setName(value);
       return;
     }
     setNumber(value);
   };
 
-  useEffect(() => {
-    dispatch(actions.fetchContacts());
-  }, [dispatch])
-
-  const dataSubmitForm = (e) => {
+  const dataSubmitForm = e => {
     e.preventDefault();
     dispatch(actions.addContacts({ name: name, number: number }));
     dispatch(actions.fetchContacts());
-    setName("");
-    setNumber("");
+    setName('');
+    setNumber('');
   };
 
   return (
